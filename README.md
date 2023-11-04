@@ -4,7 +4,7 @@ Terraform scripts that I use in order to provision my servers (for testing purpo
 
 ## Quickstart
 
-To create the infra for Google Cloud
+To create the infra
 
 ```bash
 cd google
@@ -26,13 +26,14 @@ terraform plan -out destroy.plan -destroy
 terraform apply destroy.plan
 ```
 
-## Important aspects
+## Common features
 
-Capability to set up bastion server -> internal servers should have access to the internet
-
-```bash
-ssh -A -J <username>@<bastion host ip> <username>@<internal server ip>
-```
+- Capability to set up bastion server -> internal servers should have access to the internet
+  ```bash
+  ssh -A -J <username>@<bastion host ip> <username>@<internal server ip>
+  ```
+- Set up of multiple servers (with attempts at better secured servers)
+  - etcd server instances
 
 ## Tripped problems
 
