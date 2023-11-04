@@ -34,6 +34,10 @@ terraform apply destroy.plan
   ```
 - Set up of multiple servers (with attempts at better secured servers)
   - etcd server instances
+  - TODO: mariadb
+  - TODO: nats
+  - TODO: simple golang web application + custom machine image + load balancing
+  - TODO: simple golang web application to upload and download files into S3
 
 ## Tripped problems
 
