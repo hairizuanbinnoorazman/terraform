@@ -1,3 +1,8 @@
+variable "vpc_subnet_name" {
+    description = "Define name of subnet to add instance to"
+    type        = string
+}
+
 variable "datacentre" {
     description = "Define name of application centre to be deployed to"
     type        = string
@@ -28,8 +33,21 @@ variable "image_name" {
     default     = "projects/debian-cloud/global/images/debian-11-bullseye-v20231010"
 }
 
-variable "components" {
-    description = "List of components to be added to this datacentre"
-    type        = list(string)
-    default     = ["etcd", "mariadb"]
+variable "component" {
+    description = "Name of component to be deployed"
+    type        = string
+}
+
+variable "service_meta" {
+  type = map(object({
+    server_count = number
+  }))
+  default = {
+    etcd = {
+      server_count = 3
+    }
+    mariadb = {
+      server_count = 1
+    }
+  }
 }
