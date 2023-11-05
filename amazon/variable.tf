@@ -14,3 +14,9 @@ variable "ssh_key_pair_name" {
     description = "Define name of ssh key pair to allow ssh into instances"
     type        = string
 }
+
+variable "components" {
+    description = "List of components to be added to this datacentre"
+    type        = list(string)
+    default     = ["etcd"]
+}

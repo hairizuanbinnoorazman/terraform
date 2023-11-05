@@ -38,7 +38,7 @@ resource "aws_eip" "nat" {
 
 resource "aws_nat_gateway" "gw" {
   allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.private_vpc_subnetwork.id
+  subnet_id     = aws_subnet.public_vpc_subnetwork.id
 
   depends_on = [aws_internet_gateway.gw]
 }
@@ -64,43 +64,48 @@ resource "aws_route_table" "private" {
     cidr_block = aws_vpc.custom_vpc_network.cidr_block
     gateway_id = "local"
   }
-}
 
-resource "aws_network_acl" "public" {
-  vpc_id = aws_vpc.custom_vpc_network.id
-  subnet_ids = [ aws_subnet.public_vpc_subnetwork.id ]
-
-  ingress {
-    protocol   = "tcp"
-    rule_no    = 100
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 22
-    to_port    = 22
-  }
-
-  egress {
-    protocol   = "-1"
-    rule_no    = 100
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 0
-    to_port    = 0
-    icmp_type = -1
-    icmp_code = -1
-  }
-
-  ingress {
-    protocol   = "icmp"
-    rule_no    = 101
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 0
-    to_port    = 0
-    icmp_type = -1
-    icmp_code = -1
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.gw.id
   }
 }
+
+# resource "aws_network_acl" "public" {
+#   vpc_id = aws_vpc.custom_vpc_network.id
+#   subnet_ids = [ aws_subnet.public_vpc_subnetwork.id ]
+
+#   ingress {
+#     protocol   = "tcp"
+#     rule_no    = 100
+#     action     = "allow"
+#     cidr_block = "0.0.0.0/0"
+#     from_port  = 22
+#     to_port    = 22
+#   }
+
+#   egress {
+#     protocol   = "-1"
+#     rule_no    = 100
+#     action     = "allow"
+#     cidr_block = "0.0.0.0/0"
+#     from_port  = 0
+#     to_port    = 0
+#     icmp_type = -1
+#     icmp_code = -1
+#   }
+
+#   ingress {
+#     protocol   = "icmp"
+#     rule_no    = 101
+#     action     = "allow"
+#     cidr_block = "0.0.0.0/0"
+#     from_port  = 0
+#     to_port    = 0
+#     icmp_type = -1
+#     icmp_code = -1
+#   }
+# }
 
 data "aws_ami" "amazon" {
   most_recent = true
@@ -136,6 +141,15 @@ resource "aws_security_group" "bastion" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
+
+  egress {
+    description      = "Allow All traffic to go out"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = [ "0.0.0.0/0" ]
+    ipv6_cidr_blocks = ["::/0"]
+  }
 }
 
 resource "aws_route_table_association" "public" {
@@ -155,4 +169,57 @@ resource "aws_instance" "bastion" {
   key_name      = var.ssh_key_pair_name
 
   vpc_security_group_ids = [ aws_security_group.bastion.id ]
+
+  tags = {
+    Name = "bastion"
+  }
+}
+
+resource "aws_security_group" "internal" {
+  description = "For internal traffic within vpc"
+  vpc_id      = aws_vpc.custom_vpc_network.id
+
+  ingress {
+    description      = "Allow Internal Traffic"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = [ "0.0.0.0/0" ]
+  }
+
+  egress {
+    description      = "Allow Internal Traffic"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = [ "0.0.0.0/0" ]
+  }
+}
+
+
+data "aws_ami" "debian" {
+  most_recent = true
+  filter {
+    name   = "name"
+    values = ["*debian-12-amd64*"]
+  }
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+}
+
+resource "aws_instance" "etcd" {
+  count = contains(var.components, "etcd") ? 3 : 0
+
+  ami           = data.aws_ami.debian.id
+  instance_type = var.instance_type
+  subnet_id     = aws_subnet.private_vpc_subnetwork.id
+  key_name      = var.ssh_key_pair_name
+
+  vpc_security_group_ids = [ aws_security_group.internal.id ]
+
+  tags = {
+    Name = "etcd-${count.index}"
+  }
 }
