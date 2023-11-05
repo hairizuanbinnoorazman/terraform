@@ -57,3 +57,5 @@ terraform apply destroy.plan
 ## Useful references
 
 - https://spacelift.io/blog/terraform-best-practices
+- Use import for getting stuff that has been deployed before into terraform. Tweak it till nothing is "changed" before it's managed by terraform
+- Use `replace` flag if servers need to replace due to bad updates etc
