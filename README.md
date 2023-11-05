@@ -32,6 +32,7 @@ terraform apply destroy.plan
   ```bash
   ssh -A -J <username>@<bastion host ip> <username>@<internal server ip>
   ```
+- Note: for AWS, might require different users - see OS. https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/connect-to-linux-instance.html
 - Set up of multiple servers (with attempts at better secured servers)
   - etcd server instances
   - TODO: mariadb
