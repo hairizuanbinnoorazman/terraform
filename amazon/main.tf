@@ -13,10 +13,18 @@ provider "aws" {
 
 resource "aws_vpc" "custom_vpc_network" {
   cidr_block = "10.0.0.0/16"
+
+  tags = {
+    Name = var.datacentre
+  }
 }
 
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.custom_vpc_network.id
+
+  tags = {
+    Name = "${var.datacentre}-internet-gw"
+  }
 }
 
 resource "aws_subnet" "public_vpc_subnetwork" {
@@ -25,15 +33,25 @@ resource "aws_subnet" "public_vpc_subnetwork" {
   map_public_ip_on_launch = true
 
   depends_on = [ aws_internet_gateway.gw ]
+  tags = {
+    Name = "${var.datacentre}-public-vpc"
+  }
 }
 
 resource "aws_subnet" "private_vpc_subnetwork" {
   vpc_id     = aws_vpc.custom_vpc_network.id
   cidr_block = "10.0.1.0/24"
+  tags = {
+    Name = "${var.datacentre}-private-vpc"
+  }
 }
 
 resource "aws_eip" "nat" {
   domain   = "vpc"
+
+  tags = {
+    Name = "${var.datacentre}-nat"
+  }
 }
 
 resource "aws_nat_gateway" "gw" {
@@ -41,6 +59,9 @@ resource "aws_nat_gateway" "gw" {
   subnet_id     = aws_subnet.public_vpc_subnetwork.id
 
   depends_on = [aws_internet_gateway.gw]
+  tags = {
+    Name = "${var.datacentre}-nat-gw"
+  }
 }
 
 resource "aws_route_table" "public" {
@@ -66,8 +87,8 @@ resource "aws_route_table" "private" {
   }
 
   route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.gw.id
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.gw.id
   }
 }
 
