@@ -53,3 +53,7 @@ terraform apply destroy.plan
 │ The "count" and "for_each" meta-arguments are mutually-exclusive, only one should be used to be explicit about the number of
 │ resources to be created.
 ```
+
+## Useful references
+
+- https://spacelift.io/blog/terraform-best-practices
