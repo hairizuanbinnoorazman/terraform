@@ -49,5 +49,8 @@ variable "service_meta" {
     mariadb = {
       server_count = 1
     }
+    appuser = {
+      server_count = 1
+    }
   }
 }
