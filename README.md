@@ -26,6 +26,17 @@ terraform plan -out destroy.plan -destroy
 terraform apply destroy.plan
 ```
 
+## Convenience Commands
+
+Technically, we should provide the appropiate environment when running the terraform commands. However, it does sometimes seem like a hassle to do so; hence, it might be good to rely on `make` commands (for now) to run such commands:
+
+This is only for Google Cloud Environment so far
+
+```bash
+make plan
+components='["docker"]' add_bastion=true  make plan
+```
+
 ## Common features
 
 - Capability to set up bastion server -> internal servers should have access to the internet
@@ -57,5 +68,5 @@ terraform apply destroy.plan
 ## Useful references
 
 - https://spacelift.io/blog/terraform-best-practices
-- Use import for getting stuff that has been deployed before into terraform. Tweak it till nothing is "changed" before it's managed by terraform
+- Use import for getting stuff that has been deployed before into terraform. Tweak it till nothing is "changed" before it's managed by terraform. https://spacelift.io/blog/importing-exisiting-infrastructure-into-terraform
 - Use `replace` flag if servers need to replace due to bad updates etc
