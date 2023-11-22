@@ -35,13 +35,14 @@ resource "google_compute_instance" "server" {
     subnetwork = var.vpc_subnet_name
 
     dynamic "access_config" {
-      for_each = var.enable_bastion ? [1] : []
+      for_each = var.enable_bastion ? [] : [1]
       content {
         network_tier = "PREMIUM"
       }
     }
   }
 
+  metadata_startup_script =  lookup(var.service_meta[var.component], "startup_script", "") != "" ? var.service_meta[var.component].startup_script : ""
   scheduling {
     automatic_restart   = true
     on_host_maintenance = "MIGRATE"
