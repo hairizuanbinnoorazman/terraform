@@ -30,9 +30,16 @@ resource "google_compute_instance" "server" {
 
   machine_type = "e2-medium"
   name         = "${var.component}-${count.index}"
-
+  
   network_interface {
     subnetwork = var.vpc_subnet_name
+
+    dynamic "access_config" {
+      for_each = var.enable_bastion ? [1] : []
+      content {
+        network_tier = "PREMIUM"
+      }
+    }
   }
 
   scheduling {

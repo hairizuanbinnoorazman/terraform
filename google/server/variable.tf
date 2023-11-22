@@ -9,6 +9,12 @@ variable "datacentre" {
     default     = "haha"
 }
 
+variable "enable_bastion" {
+    description = "Enable bastion host setup"
+    type        = bool
+    default     = false
+}
+
 variable "gcp_project_id" {
     description = "Define the GCP Project ID that we will interacting with"
     type        = string
