@@ -22,6 +22,12 @@ variable "gcp_zone" {
     default     = "us-central1-a"
 }
 
+variable "enable_bastion" {
+    description = "Enable bastion host setup"
+    type        = bool
+    default     = false
+}
+
 variable "image_name" {
     description = "Name of image to be used for deployments"
     type        = string
