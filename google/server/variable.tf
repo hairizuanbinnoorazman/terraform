@@ -49,6 +49,9 @@ variable "service_meta" {
     server_count = number
   }))
   default = {
+    docker = {
+      server_count = 1
+    }
     etcd = {
       server_count = 3
     }
