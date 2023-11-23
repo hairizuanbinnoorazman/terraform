@@ -64,6 +64,9 @@ variable "service_meta" {
     redis = {
       server_count = 1
     }
+    mongodb = {
+      server_count = 1
+    }
     appuser = {
       server_count = 1
     }
