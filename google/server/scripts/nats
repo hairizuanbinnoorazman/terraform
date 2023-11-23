@@ -1,8 +1,8 @@
 version=v2.10.5
 
-curl -L https://github.com/nats-io/nats-server/releases/download/$version/nats-server-$version-linux-amd64.zip -o nats-server.zip
+curl -L https://github.com/nats-io/nats-server/releases/download/${version}/nats-server-${version}-linux-amd64.zip -o nats-server.zip
 unzip nats-server.zip -d nats-server
-cp nats-server/nats-server-$version-linux-amd64/nats-server /usr/bin
+cp nats-server/nats-server-${version}-linux-amd64/nats-server /usr/bin
 
 groupadd nats
 useradd nats -g nats
