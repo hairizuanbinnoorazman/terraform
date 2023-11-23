@@ -1,0 +1,44 @@
+version=v3.5.10
+
+curl -L -O https://github.com/etcd-io/etcd/releases/download/${version}/etcd-${version}-linux-amd64.tar.gz
+tar xzvf ./etcd-${version}-linux-amd64.tar.gz -C /usr/local/bin --strip-components=1
+chmod +x /usr/local/bin
+
+groupadd -f etcd
+if id etcd >/dev/null 2>&1; then
+    echo 'user found - skip creation'
+else
+    useradd etcd -g etcd
+fi
+
+cat << EOF > /etc/etcd/config.yaml
+name: $(hostname)
+initial-advertise-peer-urls: http://$(hostname):2380
+listen-peer-urls: http://$(hostname):2380
+listen-client-urls: http://$(hostname):2379,http://127.0.0.1:2379
+advertise-client-urls: http://$(hostname):2379
+initial-cluster-token: etcd-cluster
+initial-cluster: http://etcd-0:2380,http://etcd-1:2380,http://etcd-2:2380
+initial-cluster-state: new
+data-dir: /etc/etcd/$(hostname).etcd
+wal-dir: /etc/etcd/wal
+EOF
+
+cat << EOF > /etc/systemd/system/etcd.service
+[Unit]
+Description=Etcd
+
+[Service]
+ExecStart=/usr/local/bin/etcd --config-file=/etc/etcd/config.yaml
+User=etcd
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable etcd
+sudo systemctl start etcd
+
+rm etcd-${version}-linux-amd64.tar.gz
