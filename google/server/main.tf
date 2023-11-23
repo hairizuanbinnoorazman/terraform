@@ -1,3 +1,7 @@
+data "local_file" "script" {
+  filename = "${path.module}/scripts/${var.component}"
+}
+
 resource "google_service_account" "service_account" {
   account_id   = "${var.datacentre}-${var.component}"
   display_name = "${var.component} service account for ${var.datacentre}"
@@ -42,7 +46,7 @@ resource "google_compute_instance" "server" {
     }
   }
 
-  metadata_startup_script =  lookup(var.service_meta[var.component], "startup_script", "") != "" ? var.service_meta[var.component].startup_script : ""
+  metadata_startup_script =  data.local_file.script.content
   scheduling {
     automatic_restart   = true
     on_host_maintenance = "MIGRATE"
