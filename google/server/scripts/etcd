@@ -1,5 +1,8 @@
 version=v3.5.10
 
+sudo apt update
+sudo apt install -y dnsutils
+
 curl -L -O https://github.com/etcd-io/etcd/releases/download/${version}/etcd-${version}-linux-amd64.tar.gz
 tar xzvf ./etcd-${version}-linux-amd64.tar.gz -C /usr/local/bin --strip-components=1
 chmod +x /usr/local/bin
@@ -30,6 +33,8 @@ get_ip_address() {
   echo $(nslookup $1 | awk 'NR==6 {print $2}')
 }
 
+mkdir -p /etc/etcd
+chown -R etcd:etcd /etc/etcd
 
 cat << EOF > /etc/etcd/config.yaml
 name: $(hostname)
