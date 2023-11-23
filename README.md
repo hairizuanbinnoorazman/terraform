@@ -50,12 +50,16 @@ sudo journalctl -u google-startup-scripts.service
   ssh -A -J <username>@<bastion host ip> <username>@<internal server ip>
   ```
 - Note: for AWS, might require different users - see OS. https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/connect-to-linux-instance.html
-- Set up of multiple servers (with attempts at better secured servers)
-  - etcd server instances
-  - TODO: mariadb
-  - TODO: nats
-  - TODO: simple golang web application + custom machine image + load balancing
-  - TODO: simple golang web application to upload and download files into S3
+- Google Cloud Platform
+  - [x] docker
+  - [x] etcd cluster
+  - [x] mariadb
+  - [x] mongodb
+  - [x] nats
+  - [x] nginx
+  - [x] redis
+  - [] simple golang web application + custom machine image + load balancing
+  - [] simple golang web application to upload and download files into S3
 
 ## Tripped problems
 
