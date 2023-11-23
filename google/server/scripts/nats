@@ -1,11 +1,14 @@
 version=v2.10.5
 
+sudo apt-get update
+sudo apt-get install -y unzip
+
 curl -L https://github.com/nats-io/nats-server/releases/download/${version}/nats-server-${version}-linux-amd64.zip -o nats-server.zip
 unzip nats-server.zip -d nats-server
 cp nats-server/nats-server-${version}-linux-amd64/nats-server /usr/bin
 
-groupadd nats
-useradd nats -g nats
+groupadd -f nats
+id -u nats &>/dev/null || useradd nats -g nats 
 
 cat << EOF > /etc/systemd/system/nats.service
 [Unit]
@@ -25,3 +28,5 @@ sudo systemctl daemon-reload
 sudo systemctl enable nats
 sudo systemctl start nats
 
+rm nats-server.zip
+rm -r nats-server
