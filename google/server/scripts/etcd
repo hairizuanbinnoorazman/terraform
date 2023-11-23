@@ -11,14 +11,34 @@ else
     useradd etcd -g etcd
 fi
 
+# Loop til etcd-0, etcd-1 and etcd-2 hostnames are ready
+domain_checker() {
+  while nslookup $1 | grep "can't find"
+  do
+    echo lol
+    sleep 2
+  done
+
+  echo complete
+}
+domain_checker "etcd-0"
+domain_checker "etcd-1"
+domain_checker "etcd-2"
+
+# Get ip address for etcd-0, etcd-1, etcd-2
+get_ip_address() {
+  echo $(nslookup $1 | awk 'NR==6 {print $2}')
+}
+
+
 cat << EOF > /etc/etcd/config.yaml
 name: $(hostname)
-initial-advertise-peer-urls: http://$(hostname):2380
-listen-peer-urls: http://$(hostname):2380
-listen-client-urls: http://$(hostname):2379,http://127.0.0.1:2379
-advertise-client-urls: http://$(hostname):2379
+initial-advertise-peer-urls: http://$(hostname -i):2380
+listen-peer-urls: http://$(hostname -i):2380
+listen-client-urls: http://$(hostname -i):2379,http://127.0.0.1:2379
+advertise-client-urls: http://$(hostname -i):2379
 initial-cluster-token: etcd-cluster
-initial-cluster: http://etcd-0:2380,http://etcd-1:2380,http://etcd-2:2380
+initial-cluster: etcd-0=http://$(get_ip_address "etcd-0"):2380,etcd-1=http://$(get_ip_address "etcd-1"):2380,etcd-2=http://$(get_ip_address "etcd-2"):2380
 initial-cluster-state: new
 data-dir: /etc/etcd/$(hostname).etcd
 wal-dir: /etc/etcd/wal
