@@ -1,0 +1,27 @@
+version=v2.10.5
+
+curl -L https://github.com/nats-io/nats-server/releases/download/$version/nats-server-$version-linux-amd64.zip -o nats-server.zip
+unzip nats-server.zip -d nats-server
+cp nats-server/nats-server-$version-linux-amd64/nats-server /usr/bin
+
+groupadd nats
+useradd nats -g nats
+
+cat << EOF > /etc/systemd/system/nats.service
+[Unit]
+Description=NATS messaging server
+
+[Service]
+ExecStart=/usr/bin/nats-server
+Group=nats
+User=nats
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable nats
+sudo systemctl start nats
+
