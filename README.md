@@ -37,6 +37,12 @@ make plan
 components='["docker"]' add_bastion=true  make plan
 ```
 
+For debugging google startup scripts
+```bash
+sudo journalctl -u google-startup-scripts.service
+```
+
+
 ## Common features
 
 - Capability to set up bastion server -> internal servers should have access to the internet
