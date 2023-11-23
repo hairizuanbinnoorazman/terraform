@@ -8,7 +8,11 @@ unzip nats-server.zip -d nats-server
 cp nats-server/nats-server-${version}-linux-amd64/nats-server /usr/bin
 
 groupadd -f nats
-id -u nats &>/dev/null || useradd nats -g nats 
+if id nats >/dev/null 2>&1; then
+    echo 'user found - skip creation'
+else
+    useradd nats -g nats
+fi
 
 cat << EOF > /etc/systemd/system/nats.service
 [Unit]
