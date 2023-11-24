@@ -39,7 +39,7 @@ components='["docker"]' add_bastion=true  make plan
 
 For debugging google startup scripts
 ```bash
-sudo journalctl -u google-startup-scripts.service
+sudo journalctl -u google-startup-scripts --no-pager
 ```
 
 
@@ -58,6 +58,18 @@ sudo journalctl -u google-startup-scripts.service
   - [x] nats
   - [x] nginx
   - [x] redis
+  - [x] cassandra
+  - [x] memcached
+  - [ ] postgresql
+  - [ ] couchdb
+  - [ ] elasticsearch
+  - [ ] kafka
+  - [ ] rabbitmq
+  - [ ] consul
+  - [ ] vault
+  - [ ] nomad
+  - [ ] mesos
+  - [x] jenkins (basic)
   - [] simple golang web application + custom machine image + load balancing
   - [] simple golang web application to upload and download files into S3
 
