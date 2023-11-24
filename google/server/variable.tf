@@ -76,6 +76,9 @@ variable "service_meta" {
     jenkins = {
       server_count = 1
     }
+    vault = {
+      server_count = 1
+    }
     appuser = {
       server_count = 1
     }
