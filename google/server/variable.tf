@@ -79,6 +79,9 @@ variable "service_meta" {
     vault = {
       server_count = 1
     }
+    postgresql = {
+      server_count = 1
+    }
     appuser = {
       server_count = 1
     }
