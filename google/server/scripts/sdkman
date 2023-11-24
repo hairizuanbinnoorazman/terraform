@@ -1,0 +1,12 @@
+apt update
+apt install -y unzip zip
+
+# Install sdkman
+curl -s "https://get.sdkman.io" | bash
+chmod +x "$HOME/.sdkman/bin/sdkman-init.sh"
+source $HOME/.sdkman/bin/sdkman-init.sh
+sdk version
+
+# Install java
+sdk install java ${java_version}-ms
+java -version
