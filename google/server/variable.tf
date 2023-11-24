@@ -67,6 +67,15 @@ variable "service_meta" {
     mongodb = {
       server_count = 1
     }
+    memcached = {
+      server_count = 1
+    }
+    cassandra = {
+      server_count = 1
+    }
+    jenkins = {
+      server_count = 1
+    }
     appuser = {
       server_count = 1
     }
